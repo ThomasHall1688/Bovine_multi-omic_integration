@@ -77,7 +77,7 @@ summary(res)
 
 #####multiple contrasts for timepoint and type (TT) specific DE results 
 
-MB2_res <- results(dds, contrast=c("TT","MB2","CN2")) #res <- results(dds, contrast=c("condition","treated","untreated"))
+MB2_res <- results(dds, contrast=c("TT","MB2","CN2")) 
 MB6_res <- results(dds, contrast=c("TT","MB6","CN6"))
 MB24_res <- results(dds, contrast=c("TT","MB24","CN24"))
 MB48_res <- results(dds, contrast=c("TT","MB48","CN48"))
@@ -85,6 +85,15 @@ TB2_res <- results(dds, contrast=c("TT","TB2","CN2"))
 TB6_res <- results(dds, contrast=c("TT","TB6","CN6"))
 TB24_res <- results(dds, contrast=c("TT","TB24","CN24"))
 TB48_res <- results(dds, contrast=c("TT","TB48","CN48"))
+
+MB2_LFC2_res <- results(dds, contrast=c("TT","MB2","CN2"), lfcThreshold=2) 
+MB6_LFC2_res <- results(dds, contrast=c("TT","MB6","CN6"), lfcThreshold=2)
+MB24_LFC2_res <- results(dds, contrast=c("TT","MB24","CN24"), lfcThreshold=2)
+MB48_LFC2_res <- results(dds, contrast=c("TT","MB48","CN48"), lfcThreshold=2)
+TB2_LFC2_res <- results(dds, contrast=c("TT","TB2","CN2"), lfcThreshold=2)
+TB6_LFC2_res <- results(dds, contrast=c("TT","TB6","CN6"), lfcThreshold=2)
+TB24_LFC2_res <- results(dds, contrast=c("TT","TB24","CN24"), lfcThreshold=2)
+TB48_LFC2_res <- results(dds, contrast=c("TT","TB48","CN48"), lfcThreshold=2)
 
 # To extract the normalised reads as a .CSV
 # After you run the dds <- DESeq(dds)
@@ -103,6 +112,16 @@ write.csv(as.data.frame(TB2_res), file="TB_2hpi_DE_genes.csv")
 write.csv(as.data.frame(TB6_res), file="TB_6hpi_DE_genes.csv")
 write.csv(as.data.frame(TB24_res), file="TB_24hpi_DE_genes.csv")
 write.csv(as.data.frame(TB48_res), file="TB_48hpi_DE_genes.csv")
+
+write.csv(as.data.frame(MB2_res), file="MB_2hpi_DE_LFC2_genes.csv")
+write.csv(as.data.frame(MB6_res), file="MB_6hpi_DE_LFC2_genes.csv")
+write.csv(as.data.frame(MB24_res), file="MB_24hpi_DE_LFC2_genes.csv")
+write.csv(as.data.frame(MB48_res), file="MB_48hpi_DE_LFC2_genes.csv")
+
+write.csv(as.data.frame(TB2_res), file="TB_2hpi_DE_LFC2_genes.csv")
+write.csv(as.data.frame(TB6_res), file="TB_6hpi_DE_LFC2_genes.csv")
+write.csv(as.data.frame(TB24_res), file="TB_24hpi_DE_LFC2_genes.csv")
+write.csv(as.data.frame(TB48_res), file="TB_48hpi_DE_LFC2_genes.csv")
 ############ Data transformation ##########
 
 rld <- rlog(dds, blind=FALSE)
@@ -129,101 +148,6 @@ TB48_vst <- vst[ , vst$TT %in% c("TB48", "CN48") ]
 ########################################################################################
 ##################################  Data analysis  #####################################
 ########################################################################################
-
-# res as a data frame for dow
-
-MB2 <- results(dds, contrast=c("TT","MB2","CN2"), tidy = TRUE)
-MB6 <- results(dds, contrast=c("TT","MB6","CN6"), tidy = TRUE)
-MB24 <- results(dds, contrast=c("TT","MB24","CN24"), tidy = TRUE)
-MB48 <- results(dds, contrast=c("TT","MB48","CN48"), tidy = TRUE)
-TB2 <- results(dds, contrast=c("TT","TB2","CN2"), tidy = TRUE)
-TB6 <- results(dds, contrast=c("TT","TB6","CN6"), tidy = TRUE)
-TB24 <- results(dds, contrast=c("TT","TB24","CN24"), tidy = TRUE)
-TB48 <- results(dds, contrast=c("TT","TB48","CN48"), tidy = TRUE)
-
-#Table for DE summary
-#MB24
-Table_MB24_FDR_0.05_l2fc1 <- subset(MB24_0.05_Full, abs(log2FoldChange) > 1)
-Table_MB24_FDR_0.01 <- subset(MB24_0.05_Full, padj <= 0.01)
-Table_MB24_FDR_0.01_l2fc2 <- subset(Table_MB24_FDR_0.01, abs(log2FoldChange) > 2)
-Table_MB24_FDR_0.000001 <- subset(MB24_0.05_Full, padj <= 0.000001)
-Table_MB24_FDR_0.000001_l2fc2 <- subset(Table_MB24_FDR_0.000001, abs(log2FoldChange) > 2)
-
-Table_MB24_FDR_0.05 <- MB24_0.05_Full
-Table_MB24_FDR_0.05_0p <- subset(MB24_0.05_Full, log2FoldChange > 0)
-Table_MB24_FDR_0.05_0n <- subset(MB24_0.05_Full, log2FoldChange < 0)
-Table_MB24_FDR_0.05_1p <- subset(MB24_0.05_Full, log2FoldChange > 1)
-Table_MB24_FDR_0.05_1n <- subset(MB24_0.05_Full, log2FoldChange < -1)
-Table_MB24_FDR_0.01_0p <- subset(Table_MB24_FDR_0.01, log2FoldChange > 0)
-Table_MB24_FDR_0.01_0n <- subset(Table_MB24_FDR_0.01, log2FoldChange < 0)
-Table_MB24_FDR_0.01_1p <- subset(Table_MB24_FDR_0.01, log2FoldChange > 1)
-Table_MB24_FDR_0.01_1n <- subset(Table_MB24_FDR_0.01, log2FoldChange < -1)
-
-#TB24
-TB24_0.05_Full <- TB24_FDR_0.05 
-Table_TB24_FDR_0.01 <- subset(TB24_0.05_Full, padj <= 0.01)
-Table_TB24_FDR_0.05 <- TB24_0.05_Full
-Table_TB24_FDR_0.05_0p <- subset(TB24_0.05_Full, log2FoldChange > 0)
-Table_TB24_FDR_0.05_0n <- subset(TB24_0.05_Full, log2FoldChange < 0)
-Table_TB24_FDR_0.05_1p <- subset(TB24_0.05_Full, log2FoldChange > 1)
-Table_TB24_FDR_0.05_1n <- subset(TB24_0.05_Full, log2FoldChange < -1)
-Table_TB24_FDR_0.01_0p <- subset(Table_TB24_FDR_0.01, log2FoldChange > 0)
-Table_TB24_FDR_0.01_0n <- subset(Table_TB24_FDR_0.01, log2FoldChange < 0)
-Table_TB24_FDR_0.01_1p <- subset(Table_TB24_FDR_0.01, log2FoldChange > 1)
-Table_TB24_FDR_0.01_1n <- subset(Table_TB24_FDR_0.01, log2FoldChange < -1)
-
-
-#MB6
-Table_MB6_FDR_0.05_l2fc1 <- subset(MB6_FDR_0.05, abs(log2FoldChange) > 1)
-Table_MB6_FDR_0.01 <- subset(MB6_FDR_0.05, padj <= 0.01)
-Table_MB6_FDR_0.01_l2fc2 <- subset(Table_MB6_FDR_0.01, abs(log2FoldChange) > 2)
-Table_MB6_FDR_0.000001 <- subset(MB6_FDR_0.05, padj <= 0.000001)
-Table_MB6_FDR_0.000001_l2fc2 <- subset(Table_MB6_FDR_0.000001, abs(log2FoldChange) > 2)
-
-Table_MB6_FDR_0.05 <- MB6_FDR_0.05
-Table_MB6_FDR_0.05_0p <- subset(MB6_FDR_0.05, log2FoldChange > 0)
-Table_MB6_FDR_0.05_0n <- subset(MB6_FDR_0.05, log2FoldChange < 0)
-Table_MB6_FDR_0.05_1p <- subset(MB6_FDR_0.05, log2FoldChange > 1)
-Table_MB6_FDR_0.05_1n <- subset(MB6_FDR_0.05, log2FoldChange < -1)
-Table_MB6_FDR_0.01_0p <- subset(Table_MB6_FDR_0.01, log2FoldChange > 0)
-Table_MB6_FDR_0.01_0n <- subset(Table_MB6_FDR_0.01, log2FoldChange < 0)
-Table_MB6_FDR_0.01_1p <- subset(Table_MB6_FDR_0.01, log2FoldChange > 1)
-Table_MB6_FDR_0.01_1n <- subset(Table_MB6_FDR_0.01, log2FoldChange < -1)
-
-
-#MB48
-Table_MB48_FDR_0.05_l2fc1 <- subset(MB48_0.05_Full, abs(log2FoldChange) > 1)
-Table_MB48_FDR_0.01 <- subset(MB48_0.05_Full, padj <= 0.01)
-Table_MB48_FDR_0.01_l2fc2 <- subset(Table_MB48_FDR_0.01, abs(log2FoldChange) > 2)
-Table_MB48_FDR_0.000001 <- subset(MB48_0.05_Full, padj <= 0.000001)
-Table_MB48_FDR_0.000001_l2fc2 <- subset(Table_MB48_FDR_0.000001, abs(log2FoldChange) > 2)
-
-Table_MB48_FDR_0.05 <- MB48_0.05_Full
-Table_MB48_FDR_0.05_0p <- subset(MB48_0.05_Full, log2FoldChange > 0)
-Table_MB48_FDR_0.05_0n <- subset(MB48_0.05_Full, log2FoldChange < 0)
-Table_MB48_FDR_0.05_1p <- subset(MB48_0.05_Full, log2FoldChange > 1)
-Table_MB48_FDR_0.05_1n <- subset(MB48_0.05_Full, log2FoldChange < -1)
-Table_MB48_FDR_0.01_0p <- subset(Table_MB48_FDR_0.01, log2FoldChange > 0)
-Table_MB48_FDR_0.01_0n <- subset(Table_MB48_FDR_0.01, log2FoldChange < 0)
-Table_MB48_FDR_0.01_1p <- subset(Table_MB48_FDR_0.01, log2FoldChange > 1)
-Table_MB48_FDR_0.01_1n <- subset(Table_MB48_FDR_0.01, log2FoldChange < -1)
-
-#MB2
-Table_MB2_FDR_0.05_l2fc1 <- subset(MB2_FDR_0.05, abs(log2FoldChange) > 1)
-Table_MB2_FDR_0.01 <- subset(MB2_FDR_0.05, padj <= 0.01)
-Table_MB2_FDR_0.01_l2fc2 <- subset(Table_MB2_FDR_0.01, abs(log2FoldChange) > 2)
-Table_MB2_FDR_0.000001 <- subset(MB2_FDR_0.05, padj <= 0.000001)
-Table_MB2_FDR_0.000001_l2fc2 <- subset(Table_MB2_FDR_0.000001, abs(log2FoldChange) > 2)
-
-Table_MB2_FDR_0.05 <- MB2_FDR_0.05
-Table_MB2_FDR_0.05_0p <- subset(MB2_FDR_0.05, log2FoldChange > 0)
-Table_MB2_FDR_0.05_0n <- subset(MB2_FDR_0.05, log2FoldChange < 0)
-Table_MB2_FDR_0.05_1p <- subset(MB2_FDR_0.05, log2FoldChange > 1)
-Table_MB2_FDR_0.05_1n <- subset(MB2_FDR_0.05, log2FoldChange < -1)
-Table_MB2_FDR_0.01_0p <- subset(Table_MB2_FDR_0.01, log2FoldChange > 0)
-Table_MB2_FDR_0.01_0n <- subset(Table_MB2_FDR_0.01, log2FoldChange < 0)
-Table_MB2_FDR_0.01_1p <- subset(Table_MB2_FDR_0.01, log2FoldChange > 1)
-Table_MB2_FDR_0.01_1n <- subset(Table_MB2_FDR_0.01, log2FoldChange < -1)
 
 #Change the id's of genes (if required) via 
 if (!requireNamespace("BiocManager", quietly = TRUE))
